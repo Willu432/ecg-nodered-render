@@ -1,25 +1,26 @@
-# Gunakan image resmi Node-RED sebagai base
-FROM nodered/node-red
+# Gunakan image Node.js sebagai base image
+FROM node:18-alpine
 
-# Setel direktori kerja di dalam container
-WORKDIR /data
+# Set direktori kerja di dalam kontainer
+WORKDIR /usr/src/app
 
-# Salin flows.json dan flows_cred.json yang sudah ada ke dalam container
-COPY flows.json /data/flows.json
-COPY flows_cred.json /data/flows_cred.json
+# Salin package.json dan package-lock.json untuk menginstal dependensi
+COPY package*.json ./
 
-# Jika Anda memiliki file settings.js kustom, salin juga
-# Hapus baris ini jika Anda menggunakan settings.js default
-COPY settings.js /data/settings.js
+# Instal Node-RED dan dependensinya.
+# Menggunakan --unsafe-perm diperlukan untuk beberapa node yang butuh izin khusus.
+# --no-optional dan --no-fund untuk instalasi yang lebih bersih dan cepat.
+RUN npm install --production --unsafe-perm --no-optional --no-fund
 
-# Jika Anda perlu menginstal palette Node-RED tambahan (misalnya, node-red-contrib-dashboard)
-# Anda dapat menambahkannya di sini. Ini akan berjalan setiap kali deploy.
-RUN npm install node-red-contrib-dashboard
-# RUN npm install node-red-node-serialport # Jika Anda butuh ini (tapi ingat, Node-RED di cloud tidak bisa akses serial fisik lokal)
+# Salin semua file proyek Node-RED Anda ke dalam kontainer
+# Ini akan menyalin Dockerfile, package.json, settings.js, dan semua file .config.*.json, flows.json, flows_cred.json
+COPY . .
 
-# Expose port default Node-RED
+# Secara default, Node-RED akan menggunakan variabel lingkungan PORT dari Render.
+# EXPOSE hanya untuk dokumentasi, memberitahu bahwa port 1880 akan digunakan.
 EXPOSE 1880
 
-# Jalankan Node-RED saat container dimulai
-# --userDir /data memastikan Node-RED menggunakan direktori /data di dalam container
-CMD ["npm", "start", "--", "--userDir", "/data"]
+# Command untuk menjalankan Node-RED.
+# Karena file konfigurasi Anda berada di root (bukan di direktori 'data'),
+# kita akan menggunakan direktori kerja saat ini sebagai userDir.
+CMD ["npm", "start"]
