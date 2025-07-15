@@ -10,11 +10,11 @@ COPY flows_cred.json /data/flows_cred.json
 
 # Jika Anda memiliki file settings.js kustom, salin juga
 # Hapus baris ini jika Anda menggunakan settings.js default
-# COPY settings.js /data/settings.js
+COPY settings.js /data/settings.js
 
 # Jika Anda perlu menginstal palette Node-RED tambahan (misalnya, node-red-contrib-dashboard)
 # Anda dapat menambahkannya di sini. Ini akan berjalan setiap kali deploy.
-# RUN npm install node-red-contrib-dashboard
+RUN npm install node-red-contrib-dashboard
 # RUN npm install node-red-node-serialport # Jika Anda butuh ini (tapi ingat, Node-RED di cloud tidak bisa akses serial fisik lokal)
 
 # Expose port default Node-RED
