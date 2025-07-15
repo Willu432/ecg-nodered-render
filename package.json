@@ -4,12 +4,12 @@
   "description": "Node-RED instance hosted on Render with Docker",
   "main": "node_modules/node-red/red.js",
   "scripts": {
-    "start": "node node_modules/node-red/red.js --settings ./settings.js --userDir ./data"
+    "start": "node node_modules/node-red/red.js --settings ./settings.js --userDir ./"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-red": "^3.1.0" 
+    "node-red": "^3.1.0"
   }
 }
