@@ -1,8 +1,6 @@
 {
   "name": "my-node-red-railway",
-  "name": "ecg-nodered-render",
   "version": "1.0.0",
-  "description": "Node-RED instance hosted on Railway with Docker",
   "description": "Node-RED instance hosted on Railway with Docker with custom nodes",
   "main": "node_modules/node-red/red.js",
   "scripts": {
@@ -13,7 +11,6 @@
   "license": "ISC",
   "private": true,
   "dependencies": {
-    "node-red": "^3.1.0" 
     "node-red": "^3.1.0",
     "kds-modbus-simulator": "~1.0.0",
     "node-red-contrib-ui-artless-gauge": "~0.3.12",
