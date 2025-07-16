@@ -761,5 +761,24 @@
                 "file": "C:\\Users\\willy juliansyah\\node_modules\\@inutil-labs\\node-red-cloudflare-tunnels\\cfd.js"
             }
         }
+    },
+    "ui-upload-mf": {
+        "name": "ui-upload-mf",
+        "version": "0.1.0",
+        "local": true,
+        "user": true,
+        "nodes": {
+            "ui_upload_mf": {
+                "name": "ui_upload_mf",
+                "types": [
+                    "ui_upload_mf"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "ui-upload-mf",
+                "file": "C:\\Users\\willy juliansyah\\AppData\\Roaming\\SPB_16.6\\.node-red\\node_modules\\ui-upload-mf\\ui_upload_mf.js"
+            }
+        }
     }
 }
