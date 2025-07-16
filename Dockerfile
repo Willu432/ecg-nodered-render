@@ -1,26 +1,37 @@
-# Gunakan image Node.js sebagai base image
+# Gunakan image Node.js sebagai base (dasar) untuk kontainer kita.
+# node:18-alpine adalah versi Node.js 18 yang lebih ringan (basis Alpine Linux).
 FROM node:18-alpine
 
-# Set direktori kerja di dalam kontainer
+# Set direktori kerja di dalam kontainer.
+# Semua perintah berikutnya akan dijalankan di dalam folder ini.
 WORKDIR /usr/src/app
 
-# Salin package.json dan package-lock.json untuk menginstal dependensi
-COPY package*.json ./
+# Salin file penting untuk manajemen dependensi terlebih dahulu.
+# Ini termasuk package.json (daftar paket) dan package-lock.json (versi paket terkunci).
+# Melakukannya secara terpisah akan membantu Docker membangun lebih cepat jika dependensi tidak berubah.
+COPY package.json ./
+COPY package-lock.json ./
 
-# Instal Node-RED dan dependensinya.
-# Menggunakan --unsafe-perm diperlukan untuk beberapa node yang butuh izin khusus.
-# --no-optional dan --no-fund untuk instalasi yang lebih bersih dan cepat.
+# Instal Node-RED dan semua dependensinya.
+# --production: Hanya instal paket yang dibutuhkan untuk menjalankan aplikasi (bukan untuk pengembangan).
+# --unsafe-perm: Diperlukan oleh beberapa "node" Node-RED yang butuh izin khusus saat instalasi.
+# --no-optional --no-fund: Mempercepat instalasi dan mengurangi pesan di log.
 RUN npm install --production --unsafe-perm --no-optional --no-fund
 
-# Salin semua file proyek Node-RED Anda ke dalam kontainer
-# Ini akan menyalin Dockerfile, package.json, settings.js, dan semua file .config.*.json, flows.json, flows_cred.json
-COPY . .
+# Salin semua file proyek Node-RED Anda yang penting ke dalam kontainer.
+# Ini akan menyertakan settings.js, flows.json, flows_cred.json, dan file .config.*.json Anda.
+# Karena kita sudah menyalin package*.json sebelumnya, kita tidak perlu menyalinnya lagi di sini.
+COPY settings.js ./
+COPY flows.json ./
+COPY flows_cred.json ./
+COPY .config.nodes.json ./
+COPY .config.runtime.json ./
+COPY .config.users.json ./
 
-# Secara default, Node-RED akan menggunakan variabel lingkungan PORT dari Render.
-# EXPOSE hanya untuk dokumentasi, memberitahu bahwa port 1880 akan digunakan.
+# Memberi tahu Docker bahwa kontainer ini akan "mendengarkan" di port 1880.
+# Ini lebih ke dokumentasi; Railway akan otomatis menangani port.
 EXPOSE 1880
 
-# Command untuk menjalankan Node-RED.
-# Karena file konfigurasi Anda berada di root (bukan di direktori 'data'),
-# kita akan menggunakan direktori kerja saat ini sebagai userDir.
+# Perintah yang akan dijalankan saat kontainer Docker dimulai.
+# Ini akan menjalankan skrip "start" yang sudah kita definisikan di package.json.
 CMD ["npm", "start"]

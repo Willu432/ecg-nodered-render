@@ -780,5 +780,24 @@
                 "file": "C:\\Users\\willy juliansyah\\AppData\\Roaming\\SPB_16.6\\.node-red\\node_modules\\ui-upload-mf\\ui_upload_mf.js"
             }
         }
+    },
+    "node-red-dygraphs": {
+        "name": "node-red-dygraphs",
+        "version": "0.0.2",
+        "local": true,
+        "user": true,
+        "nodes": {
+            "dygraph": {
+                "name": "dygraph",
+                "types": [
+                    "dygraph"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-dygraphs",
+                "file": "C:\\Users\\willy juliansyah\\AppData\\Roaming\\SPB_16.6\\.node-red\\node_modules\\node-red-dygraphs\\dygraph.js"
+            }
+        }
     }
 }

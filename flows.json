@@ -119,7 +119,7 @@
             }
         },
         "site": {
-            "name": "Node-RED Dashboard",
+            "name": "ECG 12 LEAD UNPAD",
             "hideToolbar": "false",
             "allowSwipe": "false",
             "lockMenu": "false",
@@ -276,7 +276,7 @@
         "id": "cd5f5bfbca6c56f3",
         "type": "mqtt in",
         "z": "ea94d0040deba697",
-        "name": "",
+        "name": "data grafik",
         "topic": "ecg/raw/+/all_leads",
         "qos": "0",
         "datatype": "auto-detect",
@@ -285,7 +285,7 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 290,
+        "x": 260,
         "y": 220,
         "wires": [
             [
@@ -316,74 +316,52 @@
         "type": "function",
         "z": "ea94d0040deba697",
         "name": "Convert adc to mV",
-        "func": "// ========================================\n// OPTIMIZED NODE-RED FUNCTION FOR ECG 12-LEAD PLOTTING\n// ========================================\n\n// Ambil payload JSON dari MQTT\nvar payload = msg.payload;\n\n// Validasi payload\nif (!payload || typeof payload !== 'object') {\n    return null; // Skip jika payload tidak valid\n}\n\n// Array untuk menyimpan 12 pesan output (satu untuk setiap lead)\nvar msgs = [];\n\n// ========================================\n// OPTION 1: MENGGUNAKAN DATA mV YANG SUDAH DIKONVERSI (RECOMMENDED)\n// Data mV sudah dihitung di Python, lebih efisien\n// ========================================\n\n// Lead I\nif (typeof payload.I_mv !== 'undefined') {\n    msgs[0] = {\n        payload: payload.I_mv,\n        topic: \"Lead I (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[0] = null;\n}\n\n// Lead II\nif (typeof payload.II_mv !== 'undefined') {\n    msgs[1] = {\n        payload: payload.II_mv,\n        topic: \"Lead II (mV)\", \n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[1] = null;\n}\n\n// Lead III\nif (typeof payload.III_mv !== 'undefined') {\n    msgs[2] = {\n        payload: payload.III_mv,\n        topic: \"Lead III (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[2] = null;\n}\n\n// Lead AVR\nif (typeof payload.AVR_mv !== 'undefined') {\n    msgs[3] = {\n        payload: payload.AVR_mv,\n        topic: \"Lead AVR (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[3] = null;\n}\n\n// Lead AVL\nif (typeof payload.AVL_mv !== 'undefined') {\n    msgs[4] = {\n        payload: payload.AVL_mv,\n        topic: \"Lead AVL (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[4] = null;\n}\n\n// Lead AVF\nif (typeof payload.AVF_mv !== 'undefined') {\n    msgs[5] = {\n        payload: payload.AVF_mv,\n        topic: \"Lead AVF (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[5] = null;\n}\n\n// Lead V1\nif (typeof payload.V1_mv !== 'undefined') {\n    msgs[6] = {\n        payload: payload.V1_mv,\n        topic: \"Lead V1 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[6] = null;\n}\n\n// Lead V2\nif (typeof payload.V2_mv !== 'undefined') {\n    msgs[7] = {\n        payload: payload.V2_mv,\n        topic: \"Lead V2 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[7] = null;\n}\n\n// Lead V3\nif (typeof payload.V3_mv !== 'undefined') {\n    msgs[8] = {\n        payload: payload.V3_mv,\n        topic: \"Lead V3 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[8] = null;\n}\n\n// Lead V4\nif (typeof payload.V4_mv !== 'undefined') {\n    msgs[9] = {\n        payload: payload.V4_mv,\n        topic: \"Lead V4 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[9] = null;\n}\n\n// Lead V5\nif (typeof payload.V5_mv !== 'undefined') {\n    msgs[10] = {\n        payload: payload.V5_mv,\n        topic: \"Lead V5 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[10] = null;\n}\n\n// Lead V6\nif (typeof payload.V6_mv !== 'undefined') {\n    msgs[11] = {\n        payload: payload.V6_mv,\n        topic: \"Lead V6 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[11] = null;\n}\n\n// Debug info (optional - bisa dikomentari)\n// node.warn(\"Subject: \" + payload.subject_name + \", Sample: \" + payload.sample_index);\n\n// Kembalikan array dari 12 pesan, satu per output\nreturn msgs;\n\n// ========================================\n// ALTERNATIVE: JIKA INGIN MENGGUNAKAN RAW DATA + KONVERSI\n// (Tidak direkomendasikan karena duplikasi perhitungan)\n// ========================================\n/*\n// Constants from ADS1293 datasheet\nvar VREF = 2.42;           \nvar GAIN = 200;            \nvar RESOLUTION = 24;       \nvar LSB_SIZE = VREF / (Math.pow(2, RESOLUTION) - 1);\n\nfunction convert_to_millivolts(adc_value) {\n    return adc_value * LSB_SIZE * 1000 / GAIN;\n}\n\n// Gunakan payload.I_raw, payload.II_raw, dll dengan convert_to_millivolts()\n// Tapi tidak efisien karena Python sudah menghitung mV\n*/",
-        "outputs": 1,
+        "func": "// Cek apakah ini adalah sinyal reset dari tombol\nif (msg.payload === \"reset\") {\n    // Buat satu pesan reset (payload-nya adalah array kosong)\n    var resetMsg = { payload: [] };\n\n    // Kirim pesan reset ini ke semua 12 output untuk membersihkan grafik\n    return [\n        resetMsg, resetMsg, resetMsg, resetMsg,\n        resetMsg, resetMsg, resetMsg, resetMsg,\n        resetMsg, resetMsg, resetMsg, resetMsg\n    ];\n}\n\n// ========================================\n// OPTIMIZED NODE-RED FUNCTION FOR ECG 12-LEAD PLOTTING\n// ========================================\n\n// Ambil payload JSON dari MQTT\nvar payload = msg.payload;\n\n// Validasi payload\nif (!payload || typeof payload !== 'object') {\n    return null; // Skip jika payload tidak valid\n}\n\n// Array untuk menyimpan 12 pesan output (satu untuk setiap lead)\nvar msgs = [];\n\n// ========================================\n// OPTION 1: MENGGUNAKAN DATA mV YANG SUDAH DIKONVERSI (RECOMMENDED)\n// Data mV sudah dihitung di Python, lebih efisien\n// ========================================\n\n// Lead I\nif (typeof payload.I_mv !== 'undefined') {\n    msgs[0] = {\n        payload: payload.I_mv,\n        topic: \"Lead I (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[0] = null;\n}\n\n// Lead II\nif (typeof payload.II_mv !== 'undefined') {\n    msgs[1] = {\n        payload: payload.II_mv,\n        topic: \"Lead II (mV)\", \n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[1] = null;\n}\n\n// Lead III\nif (typeof payload.III_mv !== 'undefined') {\n    msgs[2] = {\n        payload: payload.III_mv,\n        topic: \"Lead III (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[2] = null;\n}\n\n// Lead AVR\nif (typeof payload.AVR_mv !== 'undefined') {\n    msgs[3] = {\n        payload: payload.AVR_mv,\n        topic: \"Lead AVR (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[3] = null;\n}\n\n// Lead AVL\nif (typeof payload.AVL_mv !== 'undefined') {\n    msgs[4] = {\n        payload: payload.AVL_mv,\n        topic: \"Lead AVL (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[4] = null;\n}\n\n// Lead AVF\nif (typeof payload.AVF_mv !== 'undefined') {\n    msgs[5] = {\n        payload: payload.AVF_mv,\n        topic: \"Lead AVF (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[5] = null;\n}\n\n// Lead V1\nif (typeof payload.V1_mv !== 'undefined') {\n    msgs[6] = {\n        payload: payload.V1_mv,\n        topic: \"Lead V1 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[6] = null;\n}\n\n// Lead V2\nif (typeof payload.V2_mv !== 'undefined') {\n    msgs[7] = {\n        payload: payload.V2_mv,\n        topic: \"Lead V2 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[7] = null;\n}\n\n// Lead V3\nif (typeof payload.V3_mv !== 'undefined') {\n    msgs[8] = {\n        payload: payload.V3_mv,\n        topic: \"Lead V3 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[8] = null;\n}\n\n// Lead V4\nif (typeof payload.V4_mv !== 'undefined') {\n    msgs[9] = {\n        payload: payload.V4_mv,\n        topic: \"Lead V4 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[9] = null;\n}\n\n// Lead V5\nif (typeof payload.V5_mv !== 'undefined') {\n    msgs[10] = {\n        payload: payload.V5_mv,\n        topic: \"Lead V5 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[10] = null;\n}\n\n// Lead V6\nif (typeof payload.V6_mv !== 'undefined') {\n    msgs[11] = {\n        payload: payload.V6_mv,\n        topic: \"Lead V6 (mV)\",\n        timestamp: payload.timestamp ? payload.timestamp * 1000 : Date.now()\n    };\n} else {\n    msgs[11] = null;\n}\n\n// Debug info (optional - bisa dikomentari)\n// node.warn(\"Subject: \" + payload.subject_name + \", Sample: \" + payload.sample_index);\n\n// Kembalikan array dari 12 pesan, satu per output\nreturn msgs;\n\n// ========================================\n// ALTERNATIVE: JIKA INGIN MENGGUNAKAN RAW DATA + KONVERSI\n// (Tidak direkomendasikan karena duplikasi perhitungan)\n// ========================================\n/*\n// Constants from ADS1293 datasheet\nvar VREF = 2.42;           \nvar GAIN = 200;            \nvar RESOLUTION = 24;       \nvar LSB_SIZE = VREF / (Math.pow(2, RESOLUTION) - 1);\n\nfunction convert_to_millivolts(adc_value) {\n    return adc_value * LSB_SIZE * 1000 / GAIN;\n}\n\n// Gunakan payload.I_raw, payload.II_raw, dll dengan convert_to_millivolts()\n// Tapi tidak efisien karena Python sudah menghitung mV\n*/",
+        "outputs": 12,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 570,
-        "y": 320,
+        "y": 340,
         "wires": [
             [
-                "4f4a849b33b682e1",
-                "caf1eecc58a6ab0c",
-                "f7c363b463f33898",
-                "7c20ac46d6ef2f4b",
-                "3a4ed88c78a212a0",
-                "0c4374c6e5ee9eb7",
-                "6694f97c63280d5a",
-                "eeb36f865118c310",
-                "6a29a63d929909d7",
-                "d17031da479fbbbb",
-                "413a25eacc0abddb",
+                "cf38e7d6ad862f7f"
+            ],
+            [
+                "caf1eecc58a6ab0c"
+            ],
+            [
+                "f7c363b463f33898"
+            ],
+            [
+                "7c20ac46d6ef2f4b"
+            ],
+            [
+                "3a4ed88c78a212a0"
+            ],
+            [
+                "0c4374c6e5ee9eb7"
+            ],
+            [
+                "6694f97c63280d5a"
+            ],
+            [
+                "eeb36f865118c310"
+            ],
+            [
+                "6a29a63d929909d7"
+            ],
+            [
+                "d17031da479fbbbb"
+            ],
+            [
+                "413a25eacc0abddb"
+            ],
+            [
                 "e839f7bf76c3038a"
             ]
-        ]
-    },
-    {
-        "id": "4f4a849b33b682e1",
-        "type": "ui_chart",
-        "z": "ea94d0040deba697",
-        "name": "Lead I (mV)",
-        "group": "8976e637c1f2b876",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "label": "Lead I (mV)",
-        "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
-        "interpolate": "linear",
-        "nodata": "Waiting for Lead I data...",
-        "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
-        "removeOlder": "10",
-        "removeOlderPoints": "",
-        "removeOlderUnit": "1",
-        "cutout": 0,
-        "useOneColor": false,
-        "useUTC": true,
-        "colors": [
-            "#1f77b4",
-            "#aec7e8",
-            "#ff7f0e",
-            "#2ca02c",
-            "#98df8a",
-            "#d62728",
-            "#ff9896",
-            "#9467bd",
-            "#c5b0d5"
-        ],
-        "outputs": 1,
-        "useDifferentColor": false,
-        "className": "",
-        "x": 870,
-        "y": 120,
-        "wires": [
-            []
         ]
     },
     {
@@ -397,13 +375,13 @@
         "height": 0,
         "label": "Lead II (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -411,7 +389,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#ca1625",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -441,13 +419,13 @@
         "height": 0,
         "label": "Lead III (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -485,13 +463,13 @@
         "height": 0,
         "label": "Lead AVR (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -499,7 +477,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#207146",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -529,13 +507,13 @@
         "height": 0,
         "label": "Lead AVL (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -543,7 +521,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#9926cf",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -573,13 +551,13 @@
         "height": 0,
         "label": "Lead AVF (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -587,7 +565,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#1c9ae9",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -617,13 +595,13 @@
         "height": 0,
         "label": "Lead V1 (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -644,8 +622,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 740,
-        "y": 420,
+        "x": 920,
+        "y": 440,
         "wires": [
             []
         ]
@@ -661,13 +639,13 @@
         "height": 0,
         "label": "Lead V2 (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -675,7 +653,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#cf9820",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -688,8 +666,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 740,
-        "y": 460,
+        "x": 920,
+        "y": 480,
         "wires": [
             []
         ]
@@ -705,13 +683,13 @@
         "height": 0,
         "label": "Lead V3 (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -719,7 +697,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#931eb3",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -732,8 +710,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 740,
-        "y": 500,
+        "x": 920,
+        "y": 520,
         "wires": [
             []
         ]
@@ -749,13 +727,13 @@
         "height": 0,
         "label": "Lead V4 (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -763,7 +741,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#6224d6",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -776,8 +754,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 740,
-        "y": 540,
+        "x": 920,
+        "y": 560,
         "wires": [
             []
         ]
@@ -793,13 +771,13 @@
         "height": 0,
         "label": "Lead V5 (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -807,7 +785,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#17cf2c",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -820,8 +798,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 740,
-        "y": 580,
+        "x": 920,
+        "y": 600,
         "wires": [
             []
         ]
@@ -837,13 +815,13 @@
         "height": 0,
         "label": "Lead V6 (mV)",
         "chartType": "line",
-        "legend": "false",
-        "xformat": "auto",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "Waiting for Lead I data...",
         "dot": false,
-        "ymin": "-5",
-        "ymax": "5",
+        "ymin": "-6",
+        "ymax": "6",
         "removeOlder": "10",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -851,7 +829,7 @@
         "useOneColor": false,
         "useUTC": true,
         "colors": [
-            "#1f77b4",
+            "#df5216",
             "#aec7e8",
             "#ff7f0e",
             "#2ca02c",
@@ -864,8 +842,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 740,
-        "y": 620,
+        "x": 920,
+        "y": 640,
         "wires": [
             []
         ]
@@ -883,8 +861,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 170,
-        "y": 360,
+        "x": 70,
+        "y": 520,
         "wires": [
             [
                 "7ddd8fc1b9ba761a",
@@ -905,8 +883,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 360,
-        "y": 360,
+        "x": 160,
+        "y": 420,
         "wires": []
     },
     {
@@ -914,22 +892,29 @@
         "type": "function",
         "z": "ea94d0040deba697",
         "name": "Subject Information",
-        "func": "// ========================================\n// SUBJECT INFO PARSER FOR NODE-RED DASHBOARD\n// ========================================\n\nvar payload = msg.payload;\n\n// Validasi payload\nif (!payload || typeof payload !== 'object') {\n    return null;\n}\n\n// Siapkan array output untuk berbagai dashboard elements\nvar msgs = [];\n\n// ========================================\n// OUTPUT 1: Subject Name\n// ========================================\nmsgs[0] = {\n    payload: payload.subject_name || \"Unknown Subject\",\n    topic: \"subject_name\"\n};\n\n// ========================================\n// OUTPUT 2: Monitoring Status  \n// ========================================\nvar status = payload.status || \"unknown\";\nvar statusDisplay = \"\";\nvar statusColor = \"\";\n\nswitch(status) {\n    case \"monitoring_started\":\n        statusDisplay = \"🟢 MONITORING ACTIVE\";\n        statusColor = \"green\";\n        break;\n    case \"monitoring_stopped\":\n        statusDisplay = \"🔴 MONITORING STOPPED\";\n        statusColor = \"red\";\n        break;\n    default:\n        statusDisplay = \"⚪ UNKNOWN STATUS\";\n        statusColor = \"gray\";\n}\n\nmsgs[1] = {\n    payload: statusDisplay,\n    topic: \"monitoring_status\",\n    color: statusColor\n};\n\n// ========================================\n// OUTPUT 3: Session Information\n// ========================================\nvar sessionInfo = \"\";\n\nif (payload.status === \"monitoring_started\") {\n    var startDate = new Date(payload.start_time * 1000);\n    sessionInfo = `Started: ${startDate.toLocaleString()}\\n`;\n    sessionInfo += `COM Port: ${payload.com_port || \"N/A\"}\\n`;\n    sessionInfo += `Directory: ${payload.save_directory || \"N/A\"}`;\n} else if (payload.status === \"monitoring_stopped\") {\n    var stopDate = new Date(payload.stop_time * 1000);\n    sessionInfo = `Stopped: ${stopDate.toLocaleString()}\\n`;\n    sessionInfo += `Total Iterations: ${payload.total_iterations || 0}\\n`;\n    sessionInfo += `Session Duration: ${calculateDuration(payload)}`;\n}\n\nmsgs[2] = {\n    payload: sessionInfo,\n    topic: \"session_info\"\n};\n\n// ========================================\n// OUTPUT 4: Current Time (for dashboard refresh)\n// ========================================\nmsgs[3] = {\n    payload: new Date().toLocaleString(),\n    topic: \"last_update\"\n};\n\n// ========================================\n// HELPER FUNCTION: Calculate Session Duration\n// ========================================\nfunction calculateDuration(data) {\n    if (data.start_time && data.stop_time) {\n        var duration = data.stop_time - data.start_time;\n        var minutes = Math.floor(duration / 60);\n        var seconds = Math.floor(duration % 60);\n        return `${minutes}m ${seconds}s`;\n    }\n    return \"N/A\";\n}\n\n// ========================================\n// OUTPUT 5: Complete Subject Data (for logging/storage)\n// ========================================\nmsgs[4] = {\n    payload: payload,\n    topic: \"complete_subject_data\"\n};\n\n// Debug log\nnode.warn(`Subject Info Update: ${payload.subject_name} - Status: ${payload.status}`);\n\nreturn msgs;",
-        "outputs": 1,
+        "func": "// Cek apakah ini adalah sinyal reset dari tombol\nif (msg.payload === \"reset\") {\n    var resetMsgs = [];\n    resetMsgs[0] = { payload: \"---\" }; // Reset Nama Subjek\n    resetMsgs[1] = { payload: \"⚪ WAITING FOR STATUS\", color: \"gray\" }; // Reset Status\n    resetMsgs[2] = { payload: \"\" }; // Kosongkan Info Sesi\n    resetMsgs[3] = { payload: \"\" }; // Kosongkan Last Update\n    resetMsgs[4] = { payload: {} }; // Kosongkan data lengkap\n    return resetMsgs;\n}\n\n// ========================================\n// SUBJECT INFO PARSER FOR NODE-RED DASHBOARD\n// ========================================\n\nvar payload = msg.payload;\n\n// Validasi payload\nif (!payload || typeof payload !== 'object') {\n    return null;\n}\n\n// Siapkan array output untuk berbagai dashboard elements\nvar msgs = [];\n\n// ========================================\n// OUTPUT 1: Subject Name\n// ========================================\nmsgs[0] = {\n    payload: payload.subject_name || \"Unknown Subject\",\n    topic: \"subject_name\"\n};\n\n// ========================================\n// OUTPUT 2: Monitoring Status  \n// ========================================\nvar status = payload.status || \"unknown\";\nvar statusDisplay = \"\";\nvar statusColor = \"\";\n\nswitch(status) {\n    case \"monitoring_started\":\n        statusDisplay = \"🟢 MONITORING ACTIVE\";\n        statusColor = \"green\";\n        break;\n    case \"monitoring_stopped\":\n        statusDisplay = \"🔴 MONITORING STOPPED\";\n        statusColor = \"red\";\n        break;\n    default:\n        statusDisplay = \"⚪ UNKNOWN STATUS\";\n        statusColor = \"gray\";\n}\n\nmsgs[1] = {\n    payload: statusDisplay,\n    topic: \"monitoring_status\",\n    color: statusColor\n};\n\n// ========================================\n// OUTPUT 3: Session Information\n// ========================================\nvar sessionInfo = \"\";\n\nif (payload.status === \"monitoring_started\") {\n    var startDate = new Date(payload.start_time * 1000);\n    sessionInfo = `Started: ${startDate.toLocaleString()}\\n`;\n    sessionInfo += `COM Port: ${payload.com_port || \"N/A\"}\\n`;\n    sessionInfo += `Directory: ${payload.save_directory || \"N/A\"}`;\n} else if (payload.status === \"monitoring_stopped\") {\n    var stopDate = new Date(payload.stop_time * 1000);\n    sessionInfo = `Stopped: ${stopDate.toLocaleString()}\\n`;\n    sessionInfo += `Total Iterations: ${payload.total_iterations || 0}\\n`;\n    sessionInfo += `Session Duration: ${calculateDuration(payload)}`;\n}\n\nmsgs[2] = {\n    payload: sessionInfo,\n    topic: \"session_info\"\n};\n\n// ========================================\n// OUTPUT 4: Current Time (for dashboard refresh)\n// ========================================\nmsgs[3] = {\n    payload: new Date().toLocaleString(),\n    topic: \"last_update\"\n};\n\n// ========================================\n// HELPER FUNCTION: Calculate Session Duration\n// ========================================\nfunction calculateDuration(data) {\n    if (data.start_time && data.stop_time) {\n        var duration = data.stop_time - data.start_time;\n        var minutes = Math.floor(duration / 60);\n        var seconds = Math.floor(duration % 60);\n        return `${minutes}m ${seconds}s`;\n    }\n    return \"N/A\";\n}\n\n// ========================================\n// OUTPUT 5: Complete Subject Data (for logging/storage)\n// ========================================\nmsgs[4] = {\n    payload: payload,\n    topic: \"complete_subject_data\"\n};\n\n// Debug log\nnode.warn(`Subject Info Update: ${payload.subject_name} - Status: ${payload.status}`);\n\nreturn msgs;",
+        "outputs": 5,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 290,
-        "y": 440,
+        "x": 390,
+        "y": 540,
         "wires": [
             [
-                "a7f03cc2ad4b3b63",
-                "39d5c2387fb56830",
-                "2b1b919ec50c168a",
+                "a7f03cc2ad4b3b63"
+            ],
+            [
+                "39d5c2387fb56830"
+            ],
+            [
+                "2b1b919ec50c168a"
+            ],
+            [
                 "2a7ad81767d70d86"
-            ]
+            ],
+            []
         ]
     },
     {
@@ -937,11 +922,11 @@
         "type": "ui_text",
         "z": "ea94d0040deba697",
         "group": "4b2e970aad079d2f",
-        "order": 2,
+        "order": 1,
         "width": 0,
         "height": 0,
         "name": "Name",
-        "label": "Current Subject",
+        "label": "Subject Name",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
@@ -949,8 +934,8 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 470,
-        "y": 440,
+        "x": 630,
+        "y": 600,
         "wires": []
     },
     {
@@ -958,7 +943,7 @@
         "type": "ui_text",
         "z": "ea94d0040deba697",
         "group": "4b2e970aad079d2f",
-        "order": 3,
+        "order": 2,
         "width": 0,
         "height": 0,
         "name": "Status",
@@ -970,8 +955,8 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 470,
-        "y": 480,
+        "x": 610,
+        "y": 640,
         "wires": []
     },
     {
@@ -979,11 +964,11 @@
         "type": "ui_text",
         "z": "ea94d0040deba697",
         "group": "4b2e970aad079d2f",
-        "order": 4,
+        "order": 3,
         "width": 0,
         "height": 0,
         "name": "Session Info",
-        "label": "Session Information",
+        "label": "Session Info",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
@@ -991,8 +976,8 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 490,
-        "y": 520,
+        "x": 590,
+        "y": 680,
         "wires": []
     },
     {
@@ -1000,7 +985,7 @@
         "type": "ui_text",
         "z": "ea94d0040deba697",
         "group": "4b2e970aad079d2f",
-        "order": 5,
+        "order": 4,
         "width": 0,
         "height": 0,
         "name": "Last Updates",
@@ -1012,8 +997,81 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 490,
-        "y": 560,
+        "x": 570,
+        "y": 720,
         "wires": []
+    },
+    {
+        "id": "cf38e7d6ad862f7f",
+        "type": "ui_chart",
+        "z": "ea94d0040deba697",
+        "name": "Lead I (mV)",
+        "group": "39e82ca114928e6d",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Lead I (mV)",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Waiting for Lead I data...",
+        "dot": false,
+        "ymin": "-6",
+        "ymax": "6",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": true,
+        "colors": [
+            "#0fc233",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 870,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "da238d0240a9e0ab",
+        "type": "ui_button",
+        "z": "ea94d0040deba697",
+        "name": "",
+        "group": "4b2e970aad079d2f",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Reset Data",
+        "tooltip": "\"Klik untuk menghapus semua data\"",
+        "color": "white",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-refresh",
+        "payload": "reset",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 300,
+        "wires": [
+            [
+                "c57cfa1747c36cc4",
+                "534e80ecfb55cc6d"
+            ]
+        ]
     }
 ]
